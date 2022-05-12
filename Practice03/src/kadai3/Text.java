@@ -62,8 +62,8 @@ public class Text {
 
 				list.add(omikuji);
 
-				String result = omikuji.getOmikujicd() + omikuji.getUnsei() + omikuji.getNegaigoto() + omikuji.getAkinai() + omikuji.getGakumon();
-				System.out.println(result);
+//				String result = omikuji.getOmikujicd() + omikuji.getUnsei() + omikuji.getNegaigoto() + omikuji.getAkinai() + omikuji.getGakumon();
+//				System.out.println(result);
 			}
 			}
 			
