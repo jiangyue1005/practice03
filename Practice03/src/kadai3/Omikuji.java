@@ -1,23 +1,33 @@
 package kadai3;
 
-public abstract class Omikuji {
+public abstract class Omikuji implements Fortune {
 
-	protected String unsei;
-	protected String unseicd;
 	protected String omikujicd;
+	protected String unseicd;
+	protected String unsei;
 	protected String negaigoto;
 	protected String akinai;
 	protected String gakumon;
 
-	public abstract void unseicode();
+	public abstract void setUnsei();
 
+	
+
+	public String disp() {
+		return String.format(DISP_STR, getUnsei());
+
+	}
 
 	public String getUnsei() {
 		return unsei;
 	}
 
-	public void setUnsei(String unsei) {
-		this.unsei = unsei;
+	public String getOmikujicd() {
+		return omikujicd;
+	}
+
+	public void setOmikujicd(String string) {
+		this.omikujicd = string;
 	}
 
 	public String getUnseicd() {
@@ -26,14 +36,6 @@ public abstract class Omikuji {
 
 	public void setUnseicd(String unseicd) {
 		this.unseicd = unseicd;
-	}
-
-	public String getOmikujicd() {
-		return omikujicd;
-	}
-
-	public void setOmikujicd(String omikujicd) {
-		this.omikujicd = omikujicd;
 	}
 
 	public String getNegaigoto() {

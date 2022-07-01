@@ -1,11 +1,11 @@
 package kadai3;
 
-public class Kichi extends Omikuji{
+public class Kichi extends Omikuji {
 
 	@Override
-	public void unseicode() {
+	public void setUnsei() {
 		// TODO 自動生成されたメソッド・スタブ
-		unseicd = "5";
+		unsei = "吉";
 
 	}
 }

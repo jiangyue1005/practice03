@@ -3,9 +3,10 @@ package kadai3;
 public class Chukichi extends Omikuji {
 
 	@Override
-	public void unseicode() {
+	public void setUnsei() {
 		// TODO 自動生成されたメソッド・スタブ
-		unseicd = "2";
+		unsei = "中吉";
+
 
 	}
 }

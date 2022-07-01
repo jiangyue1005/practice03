@@ -2,9 +2,9 @@ package kadai3;
 
 public class Kyo extends Omikuji {
 
-	public void unseicode() {
+	public void setUnsei() {
 		// TODO 自動生成されたメソッド・スタブ
-		unseicd = "6";
+		unsei = "凶";
 
 	}
 }
