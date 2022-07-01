@@ -34,7 +34,7 @@ public class JDBCSample {
 		File file = new File("/Users/y_jiang/Documents/unsei.csv");
 		FileReader fr = null;
 		// int a = 0;
-		List<Integer> list2 = new ArrayList<Integer>();
+		//List<Integer> list2 = new ArrayList<Integer>();
 
 //
 		FileInputStream fis = new FileInputStream(file);
@@ -80,7 +80,7 @@ public class JDBCSample {
 			BufferedReader in = new BufferedReader(fr);
 			for (int a = 1; a <= stringArray.length; a++) {
 				int oc = +a;
-				list2.add(oc);
+				//list2.add(oc);
 
 				// System.out.println(oc);
 
@@ -133,6 +133,7 @@ public class JDBCSample {
 //				 System.out.println(omikuji.getUnsei() + " " + omikuji.getUnseicd() +
 //				  omikuji.getNegaigoto() + omikuji.getAkinai() +
 //				 omikuji.getGakumon());
+				//
 
 				}
 			}
