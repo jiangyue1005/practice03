@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
-public class JDBCSample {
+public class  Uranai {
 	public static void main(String[] args) throws Exception {
 
 		///////////////////// TB読み込む//////////////////////////////
@@ -22,11 +22,12 @@ public class JDBCSample {
 		final String USER = null;
 		final String PASS = null;
 
-		final String SQL1 = "select * from omikuji order by omikujicd asc;";
+		final String SQL1 = "select COUNT( * ) from omikuji;";
 		final String SQL2 = "insert into omikuji (omikujicd,unseicd,negaigoto,akinai,gakumon,modifiedby,updatedate,createdby,createddate)values(nextval('omikujicd_seq'),?,?,?,?,?,CURRENT_TIMESTAMP,?,CURRENT_TIMESTAMP);";
-		final String SQL3 = "select * from result order by uranaidate asc;";
-		final String SQL4 = "insert into result (uranaidate,birthday,omikujicd,modifiedby,updatedate,createdby,createddate)values(?,?,?,?,CURRENT_TIMESTAMP,?,CURRENT_TIMESTAMP);";
-		final String SQL5 = "select * from omikuji where omikujicd = ?;";
+		final String SQL3 = "insert into result (uranaidate,birthday,omikujicd,modifiedby,updatedate,createdby,createddate)values(?,?,?,?,CURRENT_TIMESTAMP,?,CURRENT_TIMESTAMP);";
+		final String SQL4 = "select * from omikuji where omikujicd = ?;";
+		final String SQL5 = "select * from result where uranaidate = ? and birthday = ?;";
+
 		Connection con = null;
 
 		// CSVファイル
@@ -37,17 +38,16 @@ public class JDBCSample {
 		Omikuji omikuji = null;
 		try {
 			// omikujiテーブルにデータがすでに存在した場合、データの書き込みをスキップ。
-			PreparedStatement findOmkjInfo = con.prepareStatement(SQL1);
-			ResultSet omkjInfoRs = findOmkjInfo.executeQuery();
+			PreparedStatement getOmikujiCount = con.prepareStatement(SQL1);
+			ResultSet getCount = getOmikujiCount.executeQuery();
 
-			// 件数
 			int count = 0;
 			// 件数取得
-			while (omkjInfoRs.next()) {
-				count = omkjInfoRs.getRow();
+			while (getCount.next()) {
+				count = getCount.getInt(1);
 			}
 
-			if (count <= 0) {// nullの場合、insert実行
+			if (count == 0) {// nullの場合、insert実行
 				PreparedStatement insertOmkjInfo = con.prepareStatement(SQL2);
 				fr = new FileReader(file);
 				BufferedReader in = new BufferedReader(fr);
@@ -87,52 +87,36 @@ public class JDBCSample {
 
 			// データ有無判定
 			boolean resultFlg = false;
-			// おみくじコード
-			String omikujicd = null;
 
+			// ランダムomikujicd生成
+			Random random = new Random();
+			String omikujicd = Integer.toString(random.nextInt(count));
+
+			// 誕生日をDate型に
+			SimpleDateFormat sdFormat1 = new SimpleDateFormat("yyyyMMdd");
+			Date birth = sdFormat1.parse(key);
+			long newBirth = birth.getTime();
+
+			// 日付型変換
 			Date today = new Date();
+			long day = today.getTime();
+			java.sql.Date uranaidate = new java.sql.Date(day);
+			java.sql.Date birthday = new java.sql.Date(newBirth);
+
 			// resultテーブルに同じデータが存在するかどうかを判定
-			PreparedStatement findResultInfo = con.prepareStatement(SQL3);
+			PreparedStatement findResultInfo = con.prepareStatement(SQL5);
+			findResultInfo.setDate(1, uranaidate);
+			findResultInfo.setDate(2, birthday);
 			ResultSet resultRs = findResultInfo.executeQuery();
+
 			while (resultRs.next()) {
-				// 同じ日かつ入力した誕生日が同じの場合はtrue
-				if (sdf.format(resultRs.getDate("uranaidate")).equals(sdf.format(today))) {
-					if (sdf.format(resultRs.getDate("birthday")).equals(key)) {
-						resultFlg = true;
-						// おみくじコード取得
-						omikujicd = resultRs.getString("omikujicd");
-					}
-				}
-			}
-
-			// 同じデータ存在しない場合insert
-			if (!resultFlg) {
-				PreparedStatement insertResultInfo = con.prepareStatement(SQL4);
-				Random random = new Random();
-
-				// 誕生日をDate型に
-				SimpleDateFormat sdFormat1 = new SimpleDateFormat("yyyyMMdd");
-				Date birth = sdFormat1.parse(key);
-				long newBirth = birth.getTime();
-
-				// 日付型変換
-				long day = today.getTime();
-				java.sql.Date uranaidate = new java.sql.Date(day);
-				java.sql.Date birthday = new java.sql.Date(newBirth);
-
-				// ランダムomikujicd生成
-				omikujicd = Integer.toString(random.nextInt(count));
-
-				insertResultInfo.setDate(1, uranaidate);
-				insertResultInfo.setDate(2, birthday);
-				insertResultInfo.setString(3, omikujicd);
-				insertResultInfo.setString(4, "姜悦");
-				insertResultInfo.setString(5, "姜悦");
-				insertResultInfo.executeUpdate();
+				resultFlg = true;
+				// おみくじコード取得
+				omikujicd = resultRs.getString("omikujicd");
 			}
 
 			// omikujicdで結果を検索
-			PreparedStatement resultInfo = con.prepareStatement(SQL5);
+			PreparedStatement resultInfo = con.prepareStatement(SQL4);
 			resultInfo.setString(1, omikujicd);
 			ResultSet getResultRs = resultInfo.executeQuery();
 			while (getResultRs.next()) {
@@ -169,6 +153,17 @@ public class JDBCSample {
 			String result = omikuji.disp() + "," + omikuji.getNegaigoto() + "," + omikuji.getAkinai() + ","
 					+ omikuji.getGakumon();
 			System.out.println(result.replace(",", "\n"));
+
+			// 同じデータ存在しない場合insert
+			if (!resultFlg) {
+				PreparedStatement insertResultInfo = con.prepareStatement(SQL3);
+				insertResultInfo.setDate(1, uranaidate);
+				insertResultInfo.setDate(2, birthday);
+				insertResultInfo.setString(3, omikujicd);
+				insertResultInfo.setString(4, "姜悦");
+				insertResultInfo.setString(5, "姜悦");
+				insertResultInfo.executeUpdate();
+			}
 
 		} catch (ParseException e) {
 			System.out.println("入力された日付は存在しません。");

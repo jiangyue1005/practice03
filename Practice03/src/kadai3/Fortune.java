@@ -6,8 +6,6 @@ public interface Fortune {
 
 	ResourceBundle rb = ResourceBundle.getBundle("fortune");
 
-//        System.out.println(rb.getString("disp_str"));
-
 	String DISP_STR = rb.getString("disp_str");
 
 	String disp();
